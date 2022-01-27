@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import 'dio_util.dart';
+
 
 class Login extends StatefulWidget {
   @override
@@ -18,9 +20,10 @@ class _LoginPageState extends State<Login> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   var _password = ''; //用户名
-  var _username = ''; //密码
+  var _username = '19811031'; //密码
   var _isShowPwd = false; //是否显示密码
   var _isShowClear = false; //是否显示输入框尾部的清除按钮
+var _checkValue=true;
 
   @override
   void initState() {
@@ -40,6 +43,8 @@ class _LoginPageState extends State<Login> {
       }
       setState(() {});
     });
+    _userNameController.text="18053321981";
+DioUtil();
     super.initState();
   }
 
@@ -70,7 +75,7 @@ class _LoginPageState extends State<Login> {
   /**
    * 验证用户名
    */
-  String validateUserName(value) {
+  String? validateUserName(value) {
     // 正则匹配手机号
     RegExp exp = RegExp(
         r'^((13[0-9])|(14[0-9])|(15[0-9])|(16[0-9])|(17[0-9])|(18[0-9])|(19[0-9]))\d{8}$');
@@ -79,19 +84,19 @@ class _LoginPageState extends State<Login> {
     } else if (!exp.hasMatch(value)) {
       return '请输入正确手机号';
     }
-    return "";
+    return null;
   }
 
   /**
    * 验证密码
    */
-  String validatePassWord(value) {
+  String? validatePassWord(value) {
     if (value.isEmpty) {
       return '密码不能为空';
     } else if (value.trim().length < 6 || value.trim().length > 18) {
       return '密码长度不正确';
     }
-    return "";
+    return  null;
   }
 
   @override
@@ -114,6 +119,7 @@ class _LoginPageState extends State<Login> {
     );
 
     //输入文本框区域
+
     Widget inputTextArea = Container(
       margin: EdgeInsets.only(left: 20, right: 20),
       decoration: new BoxDecoration(
@@ -151,7 +157,7 @@ class _LoginPageState extends State<Login> {
                 _username = value!;
               },
             ),
-            new TextFormField(
+            new TextFormField( initialValue: "19811031",
               focusNode: _focusNodePassWord,
               decoration: InputDecoration(
                   labelText: "密码",
@@ -182,7 +188,7 @@ class _LoginPageState extends State<Login> {
     );
 
     // 登录按钮区域
-    Widget loginButtonArea = new Container(
+    Widget loginButtonArea = Container(
       margin: EdgeInsets.only(left: 20, right: 20),
       height: 45.0,
       child: new ElevatedButton(
@@ -194,16 +200,29 @@ class _LoginPageState extends State<Login> {
         // 设置按钮圆角
         // shape:
         //     RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-        onPressed: () {
+        onPressed: () async {
           //点击登录按钮，解除焦点，回收键盘
           _focusNodePassWord.unfocus();
           _focusNodeUserName.unfocus();
 
           if (_formKey.currentState!.validate()) {
+
             //只有输入通过验证，才会执行这里
             _formKey.currentState!.save();
-            //todo 登录操作
             print("$_username + $_password");
+            //todo 登录操作
+             var result=await DioUtil().dio_requset("login",method: "post",params: {"userName": _username, //admin
+            "userPassword": _password }//buzhidao
+             );
+            // if(result[meta]!=200){
+            //   ScaffoldMessenger.of(context).removeCurrentSnackBar();
+            //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            //     duration: Duration(seconds: 2),
+            //     content: Text('老孟，专注分享Flutter相关技术$result.'),
+            //   ));
+            // }
+            print(result );
+
           }
         },
       ),
@@ -218,17 +237,19 @@ class _LoginPageState extends State<Login> {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          TextButton(
-            child: Text(
-              "忘记密码?",
-              style: TextStyle(
-                color: Colors.blue[400],
-                fontSize: 16.0,
-              ),
+          Container(
+            width: 150,
+            child: CheckboxListTile(controlAffinity: ListTileControlAffinity.leading,
+              title: Text('记住密码'),
+              value: _checkValue,
+              onChanged: (value){
+                setState(() {
+                  _checkValue = value!;
+                });
+              },
             ),
-            //忘记密码按钮，点击执行事件
-            onPressed: () {},
           ),
+
           TextButton(
             child: Text(
               "快速注册",
