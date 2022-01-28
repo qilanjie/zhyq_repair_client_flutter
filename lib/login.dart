@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'dio_util.dart';
 
 
+
+
 class Login extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -221,7 +223,8 @@ DioUtil();
             //     content: Text('老孟，专注分享Flutter相关技术$result.'),
             //   ));
             // }
-            print(result );
+
+            print(result);
 
           }
         },
