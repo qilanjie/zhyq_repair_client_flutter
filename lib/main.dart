@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+
 import 'login.dart';
 
 void main() {
@@ -26,7 +28,18 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: const MyHomePage(title: '山东中惠仪器维修管理系统'),
-      routes:   {"/login": (context) => Login()} ,
+      routes: {"/login": (context) => Login()},
+      localizationsDelegates: [
+        // ... app-specific localization delegate[s] here
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('zh', 'CN'), // Chinese
+        const Locale('en', 'US'), // English
+
+        // ... other locales the app supports
+      ],
     );
   }
 }
@@ -50,10 +63,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
-
-
-
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -91,15 +100,18 @@ class _MyHomePageState extends State<MyHomePage> {
             const Text(
               '欢迎使用',
             ),
-            Divider(height: 200,),
-            ElevatedButton(child: Text("登陆"), onPressed: (){
-              Navigator.of(context).pushNamed("/login");
-            })
-
+            Divider(
+              height: 200,
+            ),
+            ElevatedButton(
+                child: Text("登陆"),
+                onPressed: () {
+                  Navigator.of(context).pushNamed("/login");
+                })
           ],
         ),
       ),
- // This trailing comma makes auto-formatting nicer for build methods.
+      // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

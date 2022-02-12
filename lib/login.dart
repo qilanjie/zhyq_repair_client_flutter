@@ -1,9 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 
 import 'dio_util.dart';
-
-
-
 
 class Login extends StatefulWidget {
   @override
@@ -25,7 +25,7 @@ class _LoginPageState extends State<Login> {
   var _username = '19811031'; //密码
   var _isShowPwd = false; //是否显示密码
   var _isShowClear = false; //是否显示输入框尾部的清除按钮
-var _checkValue=true;
+  var _checkValue = true;
 
   @override
   void initState() {
@@ -45,8 +45,8 @@ var _checkValue=true;
       }
       setState(() {});
     });
-    _userNameController.text="18053321981";
-DioUtil();
+    _userNameController.text = "18053321981";
+    DioUtil();
     super.initState();
   }
 
@@ -98,7 +98,7 @@ DioUtil();
     } else if (value.trim().length < 6 || value.trim().length > 18) {
       return '密码长度不正确';
     }
-    return  null;
+    return null;
   }
 
   @override
@@ -159,7 +159,8 @@ DioUtil();
                 _username = value!;
               },
             ),
-            new TextFormField( initialValue: "19811031",
+            new TextFormField(
+              initialValue: "19811031",
               focusNode: _focusNodePassWord,
               decoration: InputDecoration(
                   labelText: "密码",
@@ -208,14 +209,16 @@ DioUtil();
           _focusNodeUserName.unfocus();
 
           if (_formKey.currentState!.validate()) {
-
             //只有输入通过验证，才会执行这里
             _formKey.currentState!.save();
             print("$_username + $_password");
             //todo 登录操作
-             var result=await DioUtil().dio_requset("login",method: "post",params: {"userName": _username, //admin
-            "userPassword": _password }//buzhidao
-             );
+            var result =
+                await DioUtil().dio_requset("login", method: "post", params: {
+              "userName": _username, //admin
+              "userPassword": _password
+            } //buzhidao
+                    );
             // if(result[meta]!=200){
             //   ScaffoldMessenger.of(context).removeCurrentSnackBar();
             //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -223,15 +226,21 @@ DioUtil();
             //     content: Text('老孟，专注分享Flutter相关技术$result.'),
             //   ));
             // }
+            var person = json.decode(result.toString());
+            print(person);
 
-            print(result);
+            ScaffoldMessenger.of(context).removeCurrentSnackBar();
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor:Colors.blue,
 
+              content: Text(
+                person['meta']['msg'],
+                textAlign: TextAlign.center,style: TextStyle(fontSize: 18),
+              ),
+            ));
           }
         },
       ),
     );
-
-
 
     //忘记密码  立即注册
     Widget bottomArea = new Container(
@@ -241,18 +250,18 @@ DioUtil();
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Container(
-            width: 150,
-            child: CheckboxListTile(controlAffinity: ListTileControlAffinity.leading,
+            width: 160,
+            child: CheckboxListTile(
+              controlAffinity: ListTileControlAffinity.leading,
               title: Text('记住密码'),
               value: _checkValue,
-              onChanged: (value){
+              onChanged: (value) {
                 setState(() {
                   _checkValue = value!;
                 });
               },
             ),
           ),
-
           TextButton(
             child: Text(
               "快速注册",
@@ -298,8 +307,6 @@ DioUtil();
             new SizedBox(
               height: 60,
             ),
-
-
             bottomArea,
           ],
         ),
