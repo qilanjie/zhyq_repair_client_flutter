@@ -1,6 +1,9 @@
+import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:zhyq_repair_client_flutter/register.dart';
 
+import 'home.dart';
 import 'login.dart';
 
 void main() {
@@ -28,10 +31,15 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: const MyHomePage(title: '山东中惠仪器维修管理系统'),
-      routes: {"/login": (context) => Login()},
+      routes: {
+        "/login": (context) => Login(),
+        "/register": (context) => Register(),
+        "/home": (context) => Home()
+      },
       localizationsDelegates: [
         // ... app-specific localization delegate[s] here
         GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
       supportedLocales: [
@@ -78,36 +86,41 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
+
+        child:
+        Column(
+
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              '欢迎使用',
-            ),
+
+
+            Expanded(child: Swiper(
+              itemBuilder: (context, index) {
+                  //         print( 'images/'+index.toString()+'.png');
+                return Image.asset(
+                  'images/'+index.toString()+'.png',
+
+                );
+              },
+              indicatorLayout: PageIndicatorLayout.COLOR,
+              autoplay: true,
+              itemCount: 4,
+              pagination: const SwiperPagination(),
+              control: const SwiperControl(),
+            ),),
             Divider(
-              height: 200,
+              height: 16,
             ),
-            ElevatedButton(
-                child: Text("登陆"),
-                onPressed: () {
-                  Navigator.of(context).pushNamed("/login");
-                })
+            Row(children:[
+              Expanded(child: ElevatedButton(
+                  child: Text("登陆",style: TextStyle(fontSize: 24),),
+                  onPressed: () {
+                    Navigator.of(context).pushNamed("/login");
+                  }),)
+              ], ),
+
+
+
           ],
         ),
       ),

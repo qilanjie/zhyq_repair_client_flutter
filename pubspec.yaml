@@ -38,6 +38,7 @@ dependencies:
   dio: ^4.0.4
   shared_preferences: ^2.0.12
   font_awesome_flutter: ^9.2.0
+  card_swiper : ^2.0.1
 
 dev_dependencies:
   flutter_test:

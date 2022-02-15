@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'dio_util.dart';
 
@@ -17,7 +18,7 @@ class _LoginPageState extends State<Login> {
 
   //用户名输入框控制器，此控制器可以监听用户名输入框操作
   TextEditingController _userNameController = new TextEditingController();
-
+  TextEditingController _passwordController = new TextEditingController();
   //表单状态
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -43,9 +44,30 @@ class _LoginPageState extends State<Login> {
       } else {
         _isShowClear = false;
       }
-      setState(() {});
+
+
+        // setState(() async {
+        //   SharedPreferences prefs = await SharedPreferences.getInstance();
+        //
+        //   _userNameController.text=prefs.getString('_username')??'';
+        //
+        //
+        //   _passwordController.text=prefs.getString('_password')??'';
+        // });
+
+
+
     });
-    _userNameController.text = "18053321981";
+    WidgetsBinding.instance?.addPostFrameCallback((_) async {
+      print("单次Frame绘制回调"); //只回调一次
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+
+        _userNameController.text=prefs.getString('_username')??'';
+
+
+        _passwordController.text=prefs.getString('_password')??'';
+    });
+    //_userNameController.text = "test";
     DioUtil();
     super.initState();
   }
@@ -79,13 +101,14 @@ class _LoginPageState extends State<Login> {
    */
   String? validateUserName(value) {
     // 正则匹配手机号
-    RegExp exp = RegExp(
-        r'^((13[0-9])|(14[0-9])|(15[0-9])|(16[0-9])|(17[0-9])|(18[0-9])|(19[0-9]))\d{8}$');
+    // RegExp exp = RegExp(
+    //     r'^((13[0-9])|(14[0-9])|(15[0-9])|(16[0-9])|(17[0-9])|(18[0-9])|(19[0-9]))\d{8}$');
     if (value.isEmpty) {
       return '用户名不能为空!';
-    } else if (!exp.hasMatch(value)) {
-      return '请输入正确手机号';
     }
+    // else if (!exp.hasMatch(value)) {
+    //   return '请输入正确手机号';
+    // }
     return null;
   }
 
@@ -136,10 +159,10 @@ class _LoginPageState extends State<Login> {
               controller: _userNameController,
               focusNode: _focusNodeUserName,
               //设置键盘类型
-              keyboardType: TextInputType.number,
+              // keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 labelText: "用户名",
-                hintText: "请输入手机号",
+                hintText: "请输入用户名",
                 prefixIcon: Icon(Icons.person),
                 //尾部添加清除按钮
                 suffixIcon: (_isShowClear)
@@ -160,7 +183,8 @@ class _LoginPageState extends State<Login> {
               },
             ),
             new TextFormField(
-              initialValue: "19811031",
+              controller: _passwordController,
+
               focusNode: _focusNodePassWord,
               decoration: InputDecoration(
                   labelText: "密码",
@@ -194,7 +218,7 @@ class _LoginPageState extends State<Login> {
     Widget loginButtonArea = Container(
       margin: EdgeInsets.only(left: 20, right: 20),
       height: 45.0,
-      child: new ElevatedButton(
+      child: ElevatedButton(
 //  color: Colors.blue[300],
         child: Text(
           "登录",
@@ -212,6 +236,17 @@ class _LoginPageState extends State<Login> {
             //只有输入通过验证，才会执行这里
             _formKey.currentState!.save();
             print("$_username + $_password");
+
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            if(_checkValue){
+              prefs.setString('_username', _username);
+              prefs.setString('_password', _password);
+            }else
+              {
+                prefs.setString('_username', '');
+                prefs.setString('_password', '');
+              }
+
             //todo 登录操作
             var result =
                 await DioUtil().dio_requset("login", method: "post", params: {
@@ -230,13 +265,18 @@ class _LoginPageState extends State<Login> {
             print(person);
 
             ScaffoldMessenger.of(context).removeCurrentSnackBar();
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor:Colors.blue,
-
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              backgroundColor: Colors.blue,
               content: Text(
                 person['meta']['msg'],
-                textAlign: TextAlign.center,style: TextStyle(fontSize: 18),
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18),
               ),
+              // duration: const Duration(seconds: 2),
             ));
+            if(person['meta']['status']==200){
+              Navigator.of(context).pushNamed('/home');
+            }
           }
         },
       ),
@@ -271,7 +311,9 @@ class _LoginPageState extends State<Login> {
               ),
             ),
             //点击快速注册、执行事件
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).pushNamed("/register");
+            },
           )
         ],
       ),
