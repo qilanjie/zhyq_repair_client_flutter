@@ -275,6 +275,9 @@ class _LoginPageState extends State<Login> {
               // duration: const Duration(seconds: 2),
             ));
             if(person['meta']['status']==200){
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              prefs.setString('token',person['data']['token'] );
+              DioUtil().init();
               Navigator.of(context).pushNamed('/home');
             }
           }

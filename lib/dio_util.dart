@@ -16,7 +16,7 @@ class DioUtil{
    SharedPreferences prefs = await SharedPreferences.getInstance();
     BaseOptions baseOptions = BaseOptions(
       baseUrl: "http://127.0.0.1:8888/api/private/v1/",
-      headers:{"token":prefs.getString('token')},
+      headers:{"authorization":prefs.getString('token')},
       connectTimeout: 5000,
     );
     _dio = Dio(baseOptions);
